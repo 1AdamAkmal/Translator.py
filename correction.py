@@ -4,24 +4,24 @@ from textblob import TextBlob
 import string
 import re
 
-class Correcting:
-    def __init__(self, text, language):
-        self.text = text
-        self.language = language
-        self.corrected_text = self.correct_text()  # This method will return corrected text
-        self.misspelled_words = self.get_misspelled_words()
+# class Correcting:
+#     def __init__(self, text, language):
+#         self.text = text
+#         self.language = language
+#         self.corrected_text = self.correct_text()  # This method will return corrected text
+#         self.misspelled_words = self.get_misspelled_words()
 
-    def correct_text(self):
-        # Use TextBlob or any other library for spelling and grammar correction
-        blob = TextBlob(self.text)
-        return str(blob.correct())
+#     def correct_text(self):
+#         # Use TextBlob or any other library for spelling and grammar correction
+#         blob = TextBlob(self.text)
+#         return str(blob.correct())
 
-    def get_misspelled_words(self):
-        spell = SpellChecker(language=self.language)
-        words = self.text.split()
-        misspelled = spell.unknown(words)
-        corrections = [(word, spell.correction(word)) for word in misspelled]
-        return corrections
+#     def get_misspelled_words(self):
+#         spell = SpellChecker(language=self.language)
+#         words = self.text.split()
+#         misspelled = spell.unknown(words)
+#         corrections = [(word, spell.correction(word)) for word in misspelled]
+#         return corrections
 
     
     
@@ -62,3 +62,34 @@ class Correcting:
 #         corrected_text = blob.correct()  # Context-aware correction
         
 #         return str(corrected_text)  # Convert the corrected blob back to string
+
+from textblob import TextBlob
+from spellchecker import SpellChecker
+import string
+
+class Correcting:
+    def __init__(self, text, language='en'):
+        self.language = language
+        self.text = text
+        self.misspelled_words = []  # Store misspelled words and corrections
+        self.corrected_text = self.correct_text()
+
+    def correct_text(self):
+        spell = SpellChecker(language=self.language)
+        words = self.text.split()
+        words_without_punctuation = [word.strip(string.punctuation) for word in words]
+
+        misspelled = spell.unknown(words_without_punctuation)
+        corrected_words = []
+        for word in words:
+            clean_word = word.strip(string.punctuation)
+            if clean_word in misspelled:
+                corrected_word = spell.correction(clean_word)
+                self.misspelled_words.append((word, corrected_word))
+                corrected_words.append(corrected_word)
+            else:
+                corrected_words.append(word)
+
+        corrected_text = ' '.join(corrected_words)
+        blob = TextBlob(corrected_text)
+        return str(blob.correct())

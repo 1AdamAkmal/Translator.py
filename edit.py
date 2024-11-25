@@ -1,300 +1,298 @@
-
 # import tkinter as tk
 # from tkinter import filedialog, colorchooser, simpledialog, messagebox
 # import random
-# from ttkbootstrap import ttk
-# from trans import Trans  # Import the Trans class from trans.py
-
-# class Edit:
-#     def __init__(self, screen) -> None:
-#         self.screen = screen
-
-#         # Create Text widget in the left sidebar for user input (translation)
-#         self.text_widget_input = tk.Text(screen, wrap='word', height=20, width=40)
-#         self.text_widget_input.grid(row=1, column=0, padx=10, pady=10, sticky='nsew')
-#         self.text_widget_input.insert(tk.END, "Write your text here to translate. Note: don't start the sentence with a capital letter, and use it in names.")
-
-#         # Create the right sidebar with editing tools and display translated text
-#         self.create_sidebar(screen)
-
-#         # Make the grid rows/columns expand and fill
-#         screen.grid_rowconfigure(0, weight=0)  # Row 0 for title (not expanding)
-#         screen.grid_rowconfigure(1, weight=1)  # Row 1 for input and sidebars to expand
-#         screen.grid_columnconfigure(0, weight=1)  # Column 0 (left sidebar) expand
-#         screen.grid_columnconfigure(1, weight=0)  # Column 1 for the Translate button (fixed width)
-#         screen.grid_columnconfigure(2, weight=1)  # Column 2 (right sidebar) expand
-
-#     def create_sidebar(self, root):
-#         # Create a frame for the right sidebar (to hold the translated text and editing tools)
-#         right_sidebar = ttk.Frame(root, width=250, padding=10)
-#         right_sidebar.grid(row=1, column=2, sticky='nsew', padx=10, pady=10)  # placed in column 2 (right of the input area)
-
-#         # Add a Text widget to display the translated text in the right sidebar
-#         self.translated_text_display = tk.Text(right_sidebar, wrap='word', height=20, width=40)
-#         self.translated_text_display.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
-#         self.translated_text_display.insert(tk.END, "Translated text will appear here...")  # Placeholder text
-#         self.translated_text_display.config(state=tk.DISABLED)  # Disable editing in the translated text display
-
-#         # Add buttons to the sidebar for text editing tools
-#         self.bold_button = ttk.Button(right_sidebar, text="Bold", command=self.toggle_bold)
-#         self.bold_button.pack(fill=tk.X, pady=5)
-
-#         self.italic_button = ttk.Button(right_sidebar, text="Italic", command=self.toggle_italic)
-#         self.italic_button.pack(fill=tk.X, pady=5)
-
-#         self.color_button = ttk.Button(right_sidebar, text="Text Color", command=self.choose_color)
-#         self.color_button.pack(fill=tk.X, pady=5)
-
-#         self.font_button = ttk.Button(right_sidebar, text="Font", command=self.choose_font)
-#         self.font_button.pack(fill=tk.X, pady=5)
-
-#         # Create a Translate button and place it in the middle (between left and right sidebars)
-#         self.translate_button = ttk.Button(root, text="Translate", command=self.translate_text)
-#         self.translate_button.grid(row=1, column=1, padx=10, pady=10)
-
-#     def translate_text(self):
-#         try:
-#             # Get the text from the left sidebar input area
-#             input_text = self.text_widget_input.get("1.0", tk.END).strip()
-
-#             if input_text:
-#                 # Create an instance of the Trans class from trans.py to handle the translation logic
-#                 translator = Trans(text=input_text, from_language='en', to_language='es')  # Translate from English to Spanish
-#                 translated_text = translator.translated_text  # Get the translated text
-
-#                 # Update the translated text display in the right sidebar as well
-#                 self.translated_text_display.config(state=tk.NORMAL)  # Re-enable editing for updating text
-#                 self.translated_text_display.delete("1.0", tk.END)
-#                 self.translated_text_display.insert(tk.END, translated_text)
-#                 self.translated_text_display.config(state=tk.DISABLED)  # Disable editing again
-#         except Exception as e:
-#             print(f"Error during translation: {e}")
-
-#     def toggle_bold(self):
-#         try:
-#             # Ensure that text is selected
-#             current_tags = self.translated_text_display.tag_names("sel.first")
-#             if "bold" in current_tags:
-#                 self.translated_text_display.tag_remove("bold", "sel.first", "sel.last")
-#             else:
-#                 self.translated_text_display.tag_add("bold", "sel.first", "sel.last")
-#                 self.translated_text_display.tag_configure("bold", font=("Helvetica", 10, "bold"))
-#         except tk.TclError:
-#             # Handle case where no text is selected
-#             pass
-
-#     def toggle_italic(self):
-#         try:
-#             # Ensure that text is selected
-#             current_tags = self.translated_text_display.tag_names("sel.first")
-#             if "italic" in current_tags:
-#                 self.translated_text_display.tag_remove("italic", "sel.first", "sel.last")
-#             else:
-#                 self.translated_text_display.tag_add("italic", "sel.first", "sel.last")
-#                 self.translated_text_display.tag_configure("italic", font=("Helvetica", 10, "italic"))
-#         except tk.TclError:
-#             # Handle case where no text is selected
-#             pass
-
-#     def choose_color(self):
-#         # Ensure that some text is selected before applying a color
-#         try:
-#             # Open a color picker dialog to choose a color
-#             color = colorchooser.askcolor()[1]  # Get the hex color code
-#             if color:
-#                 # Check if text is selected
-#                 if self.translated_text_display.tag_ranges("sel"):
-#                     color_tag = f"color_{random.randint(1000, 9999)}"
-#                     self.translated_text_display.tag_add(color_tag, "sel.first", "sel.last")
-#                     self.translated_text_display.tag_configure(color_tag, foreground=color)
-#                 else:
-#                     # If no text is selected, show a message
-#                     messagebox.showinfo("No Text Selected", "Please select some text first to apply the color.")
-#         except Exception as e:
-#             print(f"Error applying color: {e}")
-
-#     def choose_font(self):
-#         # Open a dialog to choose the font and size
-#         font_name = simpledialog.askstring("Font", "Enter Font Name (e.g., Arial, Times New Roman):")
-#         font_size = simpledialog.askinteger("Font Size", "Enter Font Size (e.g., 12, 14):", minvalue=6, maxvalue=72)
-        
-#         if font_name and font_size:
-#             try:
-#                 self.translated_text_display.tag_add("font", "sel.first", "sel.last")
-#                 self.translated_text_display.tag_configure("font", font=(font_name, font_size))
-#             except tk.TclError:
-#                 # Handle case when no text is selected (apply font to any future text)
-#                 self.translated_text_display.config(font=(font_name, font_size))
-
-# # Main part of the code (to run the app)
-# if __name__ == "__main__":
-#     root = tk.Tk()  # Create the root Tkinter window
-#     root.title("Ploto")  # Set the window title to "Ploto"
-#     root.geometry("1000x600")  # Adjust the window size to fit the sidebars
-
-#     # Create the Edit object with the root window as the parent
-#     edit_tools = Edit(screen=root)
-
-#     # Title label centered at row 0
-#     Title = ttk.Label(root, text="PLOTO", font=("Times New Roman", 34, "italic"))
-#     Title.grid(row=0, column=0, columnspan=3, pady=10)  # Center it in row 0 across all columns
-    
-#     root.mainloop()  # Start the Tkinter event loop to run the application
+# from ttkbootstrap import Style, ttk
+# import pyperclip  # For clipboard management
+# from trans import Trans  # Import the Trans class (ensure trans.py is available)
 
 import tkinter as tk
-from tkinter import filedialog, colorchooser, simpledialog, messagebox
+from tkinter import ttk, messagebox, colorchooser
+from ttkbootstrap import Style
+from trans import Trans
+import arabic_reshaper
+from bidi.algorithm import get_display
 import random
-from ttkbootstrap import ttk
-from trans import Trans  # Import the Trans class from trans.py
-import pyperclip  # Optional: if you want a more robust clipboard management
 
-class Edit:
-    def __init__(self, screen) -> None:
-        self.screen = screen
 
-        # Create Text widget in the left sidebar for user input (translation)
-        self.text_widget_input = tk.Text(screen, wrap='word', height=20, width=40)
-        self.text_widget_input.grid(row=1, column=0, padx=10, pady=10, sticky='nsew')
-        self.text_widget_input.insert(tk.END, "Write your text here to translate. Note: don't start the sentence with a capital letter, and use it in names.")
+class TranslationApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Translation App")
+        self.root.geometry("1020x600")
 
-        # Create the right sidebar with editing tools and display translated text
-        self.create_sidebar(screen)
+        # Language options
+        self.languages = {
+            "English": "en",
+            "Spanish": "es",
+            "French": "fr",
+            "German": "de",
+            "Arabic": "ar",
+        }
+        self.from_language = tk.StringVar(value="English")
+        self.to_language = tk.StringVar(value="Arabic")
 
-        # Make the grid rows/columns expand and fill
-        screen.grid_rowconfigure(0, weight=0)  # Row 0 for title (not expanding)
-        screen.grid_rowconfigure(1, weight=1)  # Row 1 for input and sidebars to expand
-        screen.grid_columnconfigure(0, weight=0, minsize=200)  # Left sidebar (fixed width)
-        screen.grid_columnconfigure(1, weight=1)  # Middle area (Translate button)
-        screen.grid_columnconfigure(2, weight=0, minsize=250)  # Right sidebar (fixed width)
+        # Title
+        title_label = ttk.Label(root, text="Translation App", font=("Helvetica", 24, "bold"))
+        title_label.place(x=350, y=10)
 
-    def create_sidebar(self, root):
-        # Create a frame for the right sidebar (to hold the translated text and editing tools)
-        right_sidebar = ttk.Frame(root, width=250, padding=10)
-        right_sidebar.grid(row=1, column=2, sticky='nsew', padx=10, pady=10)  # placed in column 2 (right of the input area)
+        # Language selectors
+        ttk.Label(root, text="From:", font=("Helvetica", 12)).place(x=200, y=60)
+        from_lang_menu = ttk.Combobox(root, textvariable=self.from_language, values=list(self.languages.keys()))
+        from_lang_menu.place(x=300, y=60, width=120)
 
-        # Add a Text widget to display the translated text in the right sidebar
-        self.translated_text_display = tk.Text(right_sidebar, wrap='word', height=20, width=40)
-        self.translated_text_display.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
-        self.translated_text_display.insert(tk.END, "Translated text will appear here...")  # Placeholder text
-        self.translated_text_display.config(state=tk.DISABLED)  # Disable editing in the translated text display
+        ttk.Label(root, text="To:", font=("Helvetica", 12)).place(x=500, y=60)
+        to_lang_menu = ttk.Combobox(root, textvariable=self.to_language, values=list(self.languages.keys()))
+        to_lang_menu.place(x=540, y=60, width=120)
 
-        # Add buttons to the sidebar for text editing tools
-        self.bold_button = ttk.Button(right_sidebar, text="Bold", command=self.toggle_bold)
-        self.bold_button.pack(fill=tk.X, pady=5)
+        # Input Text Box
+        self.input_text = tk.Text(root, wrap="word", height=10, width=30, font=("Helvetica", 12))
+        self.input_text.place(x=170, y=185)
+        self.input_text.insert(tk.END, "Write in the source language here.")
 
-        self.italic_button = ttk.Button(right_sidebar, text="Italic", command=self.toggle_italic)
-        self.italic_button.pack(fill=tk.X, pady=5)
+        # Translated Text Box
+        self.translated_text = tk.Text(root, wrap="word", height=10, width=30, font=("Helvetica", 12), state=tk.DISABLED)
+        self.translated_text.place(x=585, y=185)
 
-        self.color_button = ttk.Button(right_sidebar, text="Text Color", command=self.choose_color)
-        self.color_button.pack(fill=tk.X, pady=5)
+        # Translate Button
+        translate_button = ttk.Button(root, text="Translate", command=self.translate_text, bootstyle="warning")
+        translate_button.place(x=475, y=260)
 
-        self.font_button = ttk.Button(right_sidebar, text="Font", command=self.choose_font)
-        self.font_button.pack(fill=tk.X, pady=5)
+        # Correction Button
+        correction_button = ttk.Button(root, text="Correction Words", command=self.correct_text)
+        correction_button.place(x=460, y=420)
 
-        # Create a Translate button and place it in the middle (between left and right sidebars)
-        self.translate_button = ttk.Button(root, text="Translate", command=self.translate_text)
-        self.translate_button.grid(row=1, column=1, padx=10, pady=10)
+        # Formatting Buttons
+        bold_button = ttk.Button(root, text="Bold", command=self.toggle_bold, bootstyle="danger")
+        bold_button.place(x=870, y=200)
 
-        # Add the Copy button to copy the translated text with styles
-        self.copy_button = ttk.Button(right_sidebar, text="Copy", command=self.copy_translated_text)
-        self.copy_button.pack(fill=tk.X, pady=5)
+        italic_button = ttk.Button(root, text="Italic", command=self.toggle_italic)
+        italic_button.place(x=870, y=260)
+
+        color_button = ttk.Button(root, text="Color", command=self.choose_color)
+        color_button.place(x=870, y=320)
 
     def translate_text(self):
         try:
-            # Get the text from the left sidebar input area
-            input_text = self.text_widget_input.get("1.0", tk.END).strip()
-
+            input_text = self.input_text.get("1.0", tk.END).strip()
             if input_text:
-                # Create an instance of the Trans class from trans.py to handle the translation logic
-                translator = Trans(text=input_text, from_language='en', to_language='es')  # Translate from English to Spanish
-                translated_text = translator.translated_text  # Get the translated text
+                from_lang = self.languages[self.from_language.get()]
+                to_lang = self.languages[self.to_language.get()]
+                translator = Trans(text=input_text, from_language=from_lang, to_language=to_lang)
+                translated_text = translator.translated_text
 
-                # Update the translated text display in the right sidebar as well
-                self.translated_text_display.config(state=tk.NORMAL)  # Re-enable editing for updating text
-                self.translated_text_display.delete("1.0", tk.END)
-                self.translated_text_display.insert(tk.END, translated_text)
-                self.translated_text_display.config(state=tk.DISABLED)  # Disable editing again
+                if to_lang == "ar":
+                    reshaped_text = arabic_reshaper.reshape(translated_text)
+                    rtl_text = get_display(reshaped_text)
+                    self.display_text(self.translated_text, rtl_text)
+                else:
+                    self.display_text(self.translated_text, translated_text)
         except Exception as e:
-            print(f"Error during translation: {e}")
+            messagebox.showerror("Error", f"An error occurred during translation: {e}")
+
+    def display_text(self, text_box, text):
+        text_box.config(state=tk.NORMAL)
+        text_box.delete("1.0", tk.END)
+        text_box.insert(tk.END, text)
+        text_box.config(state=tk.DISABLED)
 
     def toggle_bold(self):
         try:
-            # Ensure that text is selected
-            current_tags = self.translated_text_display.tag_names("sel.first")
+            current_tags = self.translated_text.tag_names("sel.first")
             if "bold" in current_tags:
-                self.translated_text_display.tag_remove("bold", "sel.first", "sel.last")
+                self.translated_text.tag_remove("bold", "sel.first", "sel.last")
             else:
-                self.translated_text_display.tag_add("bold", "sel.first", "sel.last")
-                self.translated_text_display.tag_configure("bold", font=("Helvetica", 10, "bold"))
+                self.translated_text.tag_add("bold", "sel.first", "sel.last")
+                self.translated_text.tag_configure("bold", font=("Helvetica", 12, "bold"))
         except tk.TclError:
-            # Handle case where no text is selected
             pass
 
     def toggle_italic(self):
         try:
-            # Ensure that text is selected
-            current_tags = self.translated_text_display.tag_names("sel.first")
+            current_tags = self.translated_text.tag_names("sel.first")
             if "italic" in current_tags:
-                self.translated_text_display.tag_remove("italic", "sel.first", "sel.last")
+                self.translated_text.tag_remove("italic", "sel.first", "sel.last")
             else:
-                self.translated_text_display.tag_add("italic", "sel.first", "sel.last")
-                self.translated_text_display.tag_configure("italic", font=("Helvetica", 10, "italic"))
+                self.translated_text.tag_add("italic", "sel.first", "sel.last")
+                self.translated_text.tag_configure("italic", font=("Helvetica", 12, "italic"))
         except tk.TclError:
-            # Handle case where no text is selected
             pass
 
     def choose_color(self):
-        # Ensure that some text is selected before applying a color
         try:
-            # Open a color picker dialog to choose a color
-            color = colorchooser.askcolor()[1]  # Get the hex color code
-            if color:
-                # Check if text is selected
-                if self.translated_text_display.tag_ranges("sel"):
-                    color_tag = f"color_{random.randint(1000, 9999)}"
-                    self.translated_text_display.tag_add(color_tag, "sel.first", "sel.last")
-                    self.translated_text_display.tag_configure(color_tag, foreground=color)
-                else:
-                    # If no text is selected, show a message
-                    messagebox.showinfo("No Text Selected", "Please select some text first to apply the color.")
+            color = colorchooser.askcolor()[1]
+            if color and self.translated_text.tag_ranges("sel"):
+                color_tag = f"color_{random.randint(1000, 9999)}"
+                self.translated_text.tag_add(color_tag, "sel.first", "sel.last")
+                self.translated_text.tag_configure(color_tag, foreground=color)
         except Exception as e:
             print(f"Error applying color: {e}")
 
-    def choose_font(self):
-        # Open a dialog to choose the font and size
-        font_name = simpledialog.askstring("Font", "Enter Font Name (e.g., Arial, Times New Roman):")
-        font_size = simpledialog.askinteger("Font Size", "Enter Font Size (e.g., 12, 14):", minvalue=6, maxvalue=72)
-        
-        if font_name and font_size:
-            try:
-                self.translated_text_display.tag_add("font", "sel.first", "sel.last")
-                self.translated_text_display.tag_configure("font", font=(font_name, font_size))
-            except tk.TclError:
-                # Handle case when no text is selected (apply font to any future text)
-                self.translated_text_display.config(font=(font_name, font_size))
+    def correct_text(self):
+        messagebox.showinfo("Correction", "Spell correction is done automatically during translation.")
 
-    def copy_translated_text(self):
-        # Copy the translated text including formatting (bold, italics, color, etc.) to the clipboard
-        try:
-            text = self.translated_text_display.get("1.0", "end-1c")  # Get the text content
-            # Example: Using the 'pyperclip' library to handle clipboard management
-            pyperclip.copy(text)  # Copies the plain text to clipboard (without formatting)
-            # To preserve tags you need a custom clipboard manager, or implement something like RTF/HTML formatting
-            messagebox.showinfo("Copy", "Translated text copied to clipboard!")
-        except Exception as e:
-            print(f"Error copying text: {e}")
-            
-# Main part of the code (to run the app)
+
 if __name__ == "__main__":
-    root = tk.Tk()  # Create the root Tkinter window
-    root.title("Ploto")  # Set the window title to "Ploto"
-    root.geometry("1000x600")  # Adjust the window size to fit the sidebars
+    root = tk.Tk()
+    style = Style(theme="cosmo")
+    TranslationApp(root)
+    root.mainloop()
 
-    # Create the Edit object with the root window as the parent
-    edit_tools = Edit(screen=root)
 
-    # Title label centered at row 0
-    Title = ttk.Label(root, text="PLOTO", font=("Times New Roman", 34, "italic"))
-    Title.grid(row=0, column=0, columnspan=3, pady=10)  # Center it in row 0 across all columns
-    
-    root.mainloop()  # Start the Tkinter event loop to run the application
+
+
+# import tkinter as tk
+# from tkinter import ttk, messagebox, colorchooser
+# from ttkbootstrap import Style
+# from trans import Trans
+# import arabic_reshaper
+# from bidi.algorithm import get_display
+# import random
+
+
+# class TranslationApp:
+#     def __init__(self, root):
+#         self.root = root
+#         self.root.title("Translation App")
+#         self.root.geometry("1020x600")
+#         #self.root.resizable(False, False)
+
+#         # Language options
+#         self.languages = {
+#             "English": "en",
+#             "Spanish": "es",
+#             "French": "fr",
+#             "German": "de",
+#             "Arabic": "ar",
+#         }
+#         self.from_language = tk.StringVar(value="English")
+#         self.to_language = tk.StringVar(value="Arabic")
+
+#         # Title
+#         title_label = ttk.Label(root, text="Translation App", font=("Helvetica", 24, "bold"))
+#         title_label.place(x=350, y=10)
+
+#         # Language selectors
+#         ttk.Label(root, text="From:", font=("Helvetica", 12)).place(x=200, y=60)
+#         from_lang_menu = ttk.Combobox(root, textvariable=self.from_language, values=list(self.languages.keys()))
+#         from_lang_menu.place(x=300, y=60, width=120)
+
+#         ttk.Label(root, text="To:", font=("Helvetica", 12)).place(x=500, y=60)
+#         to_lang_menu = ttk.Combobox(root, textvariable=self.to_language, values=list(self.languages.keys()))
+#         to_lang_menu.place(x=540, y=60, width=120)
+
+#         # Input Text Box
+#         self.input_text = tk.Text(root, wrap="word", height=10, width=30, font=("Helvetica", 12))
+#         self.input_text.place(x=170, y=185)
+#         self.input_text.insert(tk.END, "Write in the source language here.")
+
+#         # Translated Text Box
+#         self.translated_text = tk.Text(root, wrap="word", height=10, width=30, font=("Helvetica", 12), state=tk.DISABLED)
+#         self.translated_text.place(x=585, y=185)
+
+#         # Translate Button
+#         translate_button = ttk.Button(root, text="Translate", command=self.translate_text, width=10, bootstyle = "warning")
+#         translate_button.place(x=475, y=260)
+
+#         # Correction Button
+#         correction_button = ttk.Button(root, text="Correction Words", command=self.correct_text, width=10)
+#         correction_button.place(x=475, y=380)
+
+#         # Formatting Buttons
+#         bold_button = ttk.Button(root, text="Bold", command=self.toggle_bold, width=10, bootstyle = "danger")
+#         bold_button.place(x=870, y=200)
+
+#         italic_button = ttk.Button(root, text="Italic", command=self.toggle_italic, width=10)
+#         italic_button.place(x=870, y=260)
+
+#         color_button = ttk.Button(root, text="Text Color", command=self.choose_color, width=10)
+#         color_button.place(x=870, y=320)
+
+#     def translate_text(self):
+#         try:
+#             # Get the input text from the input text box
+#             input_text = self.input_text.get("1.0", tk.END).strip()
+
+#             if input_text:
+#                 # Get the selected source and target languages
+#                 from_lang = self.languages[self.from_language.get()]
+#                 to_lang = self.languages[self.to_language.get()]
+
+#                 # Translate the text using the Trans class
+#                 translator = Trans(text=input_text, from_language=from_lang, to_language=to_lang)
+#                 translated_text = translator.translated_text
+
+#                 # Check if the target language is Arabic
+#                 if to_lang or from_lang == "ar":
+#                     # Use arabic_reshaper and Bidi to prepare the text for proper RTL display
+#                     reshaped_text = arabic_reshaper.reshape(translated_text)
+#                     rtl_text = get_display(reshaped_text)
+
+#                     # Configure the text box for Arabic display
+#                     self.translated_text.config(state=tk.NORMAL, wrap="word", font=("Arial", 12))
+#                     self.translated_text.delete("1.0", tk.END)
+#                     self.translated_text.insert(tk.END, rtl_text)  # Insert reshaped RTL text
+#                     self.translated_text.config(state=tk.DISABLED)
+                    
+#                     # Use arabic_reshaper and Bidi to prepare the text for textinput RTL display
+#                     reshaped_text2 = arabic_reshaper.reshape(translated_text)
+#                     rtl_text2 = get_display(reshaped_text2)
+
+#                     # Configure the text box for Arabic display
+#                     self.input_text.config(state=tk.NORMAL, wrap="word", font=("Arial", 12))
+#                     self.input_text.delete("1.0", tk.END)
+#                     self.input_text.insert(tk.END, rtl_text2)  # Insert reshaped RTL text
+#                     self.input_text.config(state=tk.DISABLED)
+#                 else:
+#                     # Handle left-to-right languages (e.g., English, Spanish)
+#                     self.translated_text.config(state=tk.NORMAL, wrap="word", font=("Helvetica", 12))
+#                     self.translated_text.delete("1.0", tk.END)
+#                     self.translated_text.insert(tk.END, translated_text)
+#                     self.translated_text.config(state=tk.DISABLED)
+#         except Exception as e:
+#             # Show error message in case of failure
+#             messagebox.showerror("Error", f"An error occurred during translation: {e}")
+#             print(f"Error details: {e}")  # Log error for debugging
+
+#     def toggle_bold(self):
+#         try:
+#             current_tags = self.translated_text.tag_names("sel.first")
+#             if "bold" in current_tags:
+#                 self.translated_text.tag_remove("bold", "sel.first", "sel.last")
+#             else:
+#                 self.translated_text.tag_add("bold", "sel.first", "sel.last")
+#                 self.translated_text.tag_configure("bold", font=("Helvetica", 12, "bold"))
+#         except tk.TclError:
+#             pass
+
+#     def toggle_italic(self):
+#         try:
+#             current_tags = self.translated_text.tag_names("sel.first")
+#             if "italic" in current_tags:
+#                 self.translated_text.tag_remove("italic", "sel.first", "sel.last")
+#             else:
+#                 self.translated_text.tag_add("italic", "sel.first", "sel.last")
+#                 self.translated_text.tag_configure("italic", font=("Helvetica", 12, "italic"))
+#         except tk.TclError:
+#             pass
+
+#     def choose_color(self):
+#         try:
+#             color = colorchooser.askcolor()[1]
+#             if color:
+#                 if self.translated_text.tag_ranges("sel"):
+#                     color_tag = f"color_{random.randint(1000, 9999)}"
+#                     self.translated_text.tag_add(color_tag, "sel.first", "sel.last")
+#                     self.translated_text.tag_configure(color_tag, foreground=color)
+#         except Exception as e:
+#             print(f"Error applying color: {e}")
+
+#     def correct_text(self):
+#         pass
+
+
+# # Run the app
+# if __name__ == "__main__":
+#     root = tk.Tk()
+#     style = Style(theme="cosmo")  # Ttkbootstrap theme
+#     TranslationApp(root)
+#     root.mainloop()
